@@ -1,6 +1,6 @@
 # Resource: Create AWS Load Balancer Controller IAM Policy 
 resource "aws_iam_policy" "lbc_iam_policy" {
-  name        = "${local.name}-AWSLoadBalancerControllerIAMPolicy"
+  name        = "${var.eks_name}-AWSLoadBalancerControllerIAMPolicy"
   path        = "/"
   description = "AWS Load Balancer Controller IAM Policy"
   #policy = data.http.lbc_iam_policy.body
@@ -14,7 +14,7 @@ output "lbc_iam_policy_arn" {
 # Resource: Create IAM Role 
 resource "aws_iam_role" "lbc_iam_role" {
   depends_on = [aws_eks_cluster.this]
-  name       = "${local.name}-lbc-iam-role"
+  name       = "${var.eks_name}-lbc-iam-role"
 
   # Terraform's "jsonencode" function converts a Terraform expression result to valid JSON syntax.
   assume_role_policy = jsonencode({
@@ -25,7 +25,7 @@ resource "aws_iam_role" "lbc_iam_role" {
         Effect = "Allow"
         Sid    = ""
         Principal = {
-          Federated = "${aws_iam_openid_connect_provider.oidc_provider.arn}"
+          Federated = "${aws_iam_openid_connect_provider.this.arn}"
         }
         Condition = {
           StringEquals = {
