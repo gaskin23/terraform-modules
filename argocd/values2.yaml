@@ -1,0 +1,43 @@
+server:
+  configEnabled: true
+  additionalApplications:
+    # Root app-of-apps definition
+    - name: app-of-apps
+      namespace: argo-cd
+      destination:
+        namespace: argo-cd
+        server: https://kubernetes.default.svc
+      project: argocd
+      source:
+        path: apps
+        repoURL: https://github.com/gaskin23/microservices-demo.git
+        targetRevision: HEAD
+        directory:
+          recurse: true
+      syncPolicy:
+        automated:
+          selfHeal: true
+          prune: true
+      # Applications under the root app
+      apps:
+        - name: microservices-demo
+          path: release/kubernetes-manifests.yaml
+          repoURL: https://github.com/gaskin23/microservices-demo.git
+          targetRevision: HEAD
+  # Other configuration for ArgoCD remains unchanged
+  additionalProjects:
+  - name: argocd
+    namespace: argo-cd
+    additionalLabels: {}
+    additionalAnnotations: {}
+    description: ArgoCD Project
+    sourceRepos:
+    - '*'
+    destinations:
+    - namespace: argo-cd
+      server: https://kubernetes.default.svc
+    clusterResourceWhitelist:
+    - group: '*'
+      kind: '*'
+    orphanedResources:
+      warn: false
