@@ -2,7 +2,7 @@
 
 # Resource: Helm Release 
 resource "helm_release" "loadbalancer_controller" {
-  depends_on = [aws_iam_role.lbc_iam_role, aws_eks_node_group.this]
+  depends_on = [aws_iam_role.lbc_iam_role]
   name       = "aws-load-balancer-controller"
 
   repository = "https://aws.github.io/eks-charts"
@@ -32,7 +32,7 @@ resource "helm_release" "loadbalancer_controller" {
 
   set {
     name  = "vpcId"
-    value = aws_vpc.this.id
+    value = var.env
   }
 
   set {
@@ -42,6 +42,6 @@ resource "helm_release" "loadbalancer_controller" {
 
   set {
     name  = "guardian"
-    value = aws_eks_cluster.this.id
+    value = var.eks_name
   }
 }
