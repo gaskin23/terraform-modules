@@ -1,5 +1,5 @@
 # Resource: Create AWS Load Balancer Controller IAM Policy 
-data "aws_iam_openid_connect_provider" "this" {
+data "aws_iam_openid_connect_provider" "lb" {
   arn = var.openid_provider_arn
 }
 resource "aws_iam_policy" "lbc_iam_policy" {
@@ -27,7 +27,7 @@ resource "aws_iam_role" "lbc_iam_role" {
         Effect = "Allow"
         Sid    = ""
         Principal = {
-          Federated = [data.aws_iam_openid_connect_provider.this.arn]
+          Federated = [data.aws_iam_openid_connect_provider.lb.arn]
         }
         Condition = {
           StringEquals = {
