@@ -2,6 +2,11 @@
 data "aws_iam_openid_connect_provider" "lb" {
   arn = var.openid_provider_arn
 }
+
+locals {
+  oidc_provider_id = element(split("/", data.aws_iam_openid_connect_provider.lb.arn), -1)
+}
+
 resource "aws_iam_policy" "lbc_iam_policy" {
   name        = "${var.eks_name}-AWSLoadBalancerControllerIAMPolicy"
   path        = "/"
@@ -31,13 +36,18 @@ resource "aws_iam_role" "lbc_iam_role" {
         }
         Condition = {
           StringEquals = {
-            "${local.aws_iam_oidc_connect_provider_extract_from_arn}:aud" : "sts.amazonaws.com",
-            "${local.aws_iam_oidc_connect_provider_extract_from_arn}:sub" : "system:serviceaccount:kube-system:aws-load-balancer-controller"
+            "${data.aws_iam_openid_connect_provider.lb.url}:aud" = "sts.amazonaws.com"
+
           }
         }
       },
     ]
   })
+    condition = {
+    test     = "StringEquals"
+    variable = "${local.oidc_provider_id}:aud"
+    values   = ["sts.amazonaws.com"]
+    }
 
   tags = {
     tag-key = "AWSLoadBalancerControllerIAMPolicy"

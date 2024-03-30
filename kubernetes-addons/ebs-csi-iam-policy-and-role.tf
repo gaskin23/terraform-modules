@@ -1,6 +1,10 @@
 # #data.terraform_remote_state.eks.outputs.aws_iam_openid_connect_provider_arn
 # #data.terraform_remote_state.eks.outputs.aws_iam_openid_connect_provider_extract_from_arn
 
+data "aws_iam_openid_connect_provider" "csi" {
+  arn = var.openid_provider_arn
+}
+
 # # Resource: Create EBS CSI IAM Policy 
 resource "aws_iam_policy" "ebs_csi_iam_policy" {
   name        = "${var.eks_name}-AmazonEKS_EBS_CSI_Driver_Policy"
@@ -27,7 +31,7 @@ resource "aws_iam_role" "ebs_csi_iam_role" {
         Effect = "Allow"
         Sid    = ""
         Principal = {
-          Federated = "${aws_iam_openid_connect_provider.this.arn}"
+          Federated = [data.aws_iam_openid_connect_provider.csi.arn]
         }
         Condition = {
           StringEquals = {
