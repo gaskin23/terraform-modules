@@ -49,7 +49,9 @@ variable "rds_db_subnet_group_name" {
   type        = string
 }
 
-variable "eks_cluster_security_group_ids" {
-  description = "A list of security group IDs associated with the EKS cluster"
-  type        = list(string)
+variable "security_group_id" {}
+
+variable "vpc_id" {
+  description = "VPC id for eks cluster alb"
+  type        = string
 }

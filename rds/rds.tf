@@ -1,3 +1,9 @@
+data "aws_security_group" "eks" {
+  id = var.security_group_id
+}
+
+
+
 resource "aws_db_instance" "this" {
   allocated_storage    = var.rds_allocated_storage
   storage_type         = var.rds_storage_type
@@ -54,16 +60,20 @@ resource "aws_db_subnet_group" "this" {
   subnet_ids = var.private_subnet_ids
 }
 
+data "aws_vpc" "rds" {
+  id = var.vpc_id
+}
+
 resource "aws_security_group" "rds" {
   name        = "rds-sg"
   description = "Allow all inbound traffic from EKS"
-  vpc_id      = var.vpc_id
+  vpc_id      = data.aws_vpc.lb.id
 
   ingress {
     from_port   = 5432
     to_port     = 5432
     protocol    = "tcp"
-    security_groups = var.eks_cluster_security_group_ids
+    security_groups = data.aws_security_group.eks
   }
 
   egress {
