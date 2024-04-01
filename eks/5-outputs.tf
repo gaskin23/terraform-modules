@@ -7,5 +7,5 @@ output "openid_provider_arn" {
 }
 
 output "eks_cluster_security_group_id" {
-  value = aws_eks_cluster.eks.vpc_config[0].security_group_ids
+  value = aws_eks_cluster.this.vpc_config[0].security_group_ids
 }
