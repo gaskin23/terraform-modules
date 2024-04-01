@@ -63,7 +63,7 @@ data "aws_vpc" "rds" {
 resource "aws_security_group" "rds" {
   name        = "rds-sg"
   description = "Allow all inbound traffic from EKS"
-  vpc_id      = data.aws_vpc.lb.id
+  vpc_id      = data.aws_vpc.rds.id
 
   ingress {
     from_port   = 5432
