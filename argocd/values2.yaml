@@ -15,14 +15,6 @@ server:
         alb.ingress.kubernetes.io/scheme: internet-facing
         alb.ingress.kubernetes.io/success-codes: "404"
         alb.ingress.kubernetes.io/target-type: ip
-      # Additional ALB-specific annotations may be required depending on your setup
-    # paths:
-    #   - pathType: ImplementationSpecific
-    #     backend:
-    #       service:
-    #         name: argo-cd
-    #         port:
-    #           number: 8080
     hosts:
       - argocd.devopsalp.click
 

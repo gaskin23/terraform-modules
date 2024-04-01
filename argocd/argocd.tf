@@ -35,20 +35,6 @@ resource "helm_release" "argocd" {
   values     = [file("${path.module}/values2.yaml")]
 
   ## Server params
-  set {
-    name  = "server.service.type"
-    value = "LoadBalancer"
-  }
-
-  set { # Manage Argo CD configmap (Declarative Setup)
-    name  = "server.configEnabled"
-    value = "true"
-  }
-
-  set { # Argo CD server name
-    name  = "server.name"
-    value = "argocd-server"
-  }
 
   set { # Annotations applied to created service account
     name  = "server.serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
