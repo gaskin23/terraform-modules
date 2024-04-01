@@ -1,12 +1,8 @@
 server:
   service:
     type: ClusterIP
-    name: argo-cd
-    ports:
-    - name: http
-      port: 8080
-      targetPort: 8080
   ingress:
+    ingressClassName: alb
     enabled: true
     annotations:
         alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:us-east-1:851725307340:certificate/2bcbf882-319c-406c-8d7d-1e9f0f17f908
@@ -19,13 +15,13 @@ server:
         alb.ingress.kubernetes.io/success-codes: "404"
         alb.ingress.kubernetes.io/target-type: ip
       # Additional ALB-specific annotations may be required depending on your setup
-    paths:
-      - pathType: ImplementationSpecific
-        backend:
-          service:
-            name: argo-cd
-            port:
-              number: 8080
+    # paths:
+    #   - pathType: ImplementationSpecific
+    #     backend:
+    #       service:
+    #         name: argo-cd
+    #         port:
+    #           number: 8080
     hosts:
       - argocd.devopsalp.click
 
