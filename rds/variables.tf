@@ -50,8 +50,3 @@ variable "rds_db_subnet_group_name" {
 }
 
 variable "security_group_id" {}
-
-variable "vpc_id" {
-  description = "VPC id for eks cluster alb"
-  type        = string
-}

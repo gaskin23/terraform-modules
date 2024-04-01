@@ -55,10 +55,6 @@ resource "random_password" "password" {
   special = true
 }
 
-resource "aws_db_subnet_group" "this" {
-  name       = var.rds_db_subnet_group_name
-  subnet_ids = var.private_subnet_ids
-}
 
 data "aws_vpc" "rds" {
   id = var.vpc_id
