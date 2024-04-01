@@ -69,7 +69,7 @@ resource "aws_security_group" "rds" {
     from_port   = 5432
     to_port     = 5432
     protocol    = "tcp"
-    security_groups = data.aws_security_group.eks
+    security_groups = [data.aws_security_group.eks.id] # Corrected reference here
   }
 
   egress {
@@ -79,6 +79,7 @@ resource "aws_security_group" "rds" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 }
+
 
 output "rds_endpoint" {
   value = aws_db_instance.this.endpoint
