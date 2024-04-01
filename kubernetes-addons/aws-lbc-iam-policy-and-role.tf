@@ -4,7 +4,7 @@ data "aws_iam_openid_connect_provider" "lb" {
 }
 
 locals {
-  oidc_provider_id = last(split("/", data.aws_iam_openid_connect_provider.lb.arn))
+  oidc_provider_id = join("", slice(split("/", data.aws_iam_openid_connect_provider.lb.arn), length(split("/", data.aws_iam_openid_connect_provider.lb.arn)) - 1, length(split("/", data.aws_iam_openid_connect_provider.lb.arn))))
 }
 
 resource "aws_iam_policy" "lbc_iam_policy" {
