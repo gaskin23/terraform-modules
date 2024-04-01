@@ -35,7 +35,7 @@ resource "aws_iam_role" "ebs_csi_iam_role" {
         }
         Condition = {
           StringEquals = {
-            "${local.aws_iam_oidc_connect_provider_extract_from_arn}:sub" : "system:serviceaccount:kube-system:ebs-csi-controller-sa"
+            "${data.aws_iam_openid_connect_provider.csi.arn}:sub" : "system:serviceaccount:kube-system:ebs-csi-controller-sa"
           }
         }
 

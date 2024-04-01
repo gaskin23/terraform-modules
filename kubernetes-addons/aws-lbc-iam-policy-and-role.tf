@@ -4,7 +4,7 @@ data "aws_iam_openid_connect_provider" "lb" {
 }
 
 locals {
-  oidc_provider_id = element(split("/", data.aws_iam_openid_connect_provider.lb.arn), -1)
+  oidc_provider_id = last(split("/", data.aws_iam_openid_connect_provider.lb.arn))
 }
 
 resource "aws_iam_policy" "lbc_iam_policy" {
@@ -43,12 +43,6 @@ resource "aws_iam_role" "lbc_iam_role" {
       },
     ]
   })
-    condition = {
-    test     = "StringEquals"
-    variable = "${local.oidc_provider_id}:aud"
-    values   = ["sts.amazonaws.com"]
-    }
-
   tags = {
     tag-key = "AWSLoadBalancerControllerIAMPolicy"
   }
