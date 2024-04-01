@@ -1,43 +1,59 @@
 server:
-  configEnabled: true
-  additionalApplications:
-    # Root app-of-apps definition
-    - name: app-of-apps
+  service:
+    type: ClusterIP
+  ingress:
+    enabled: true
+    annotations:
+      kubernetes.io/ingress.class: "alb"
+      alb.ingress.kubernetes.io/scheme: "internet-facing"
+      # Additional ALB-specific annotations may be required depending on your setup
+    paths:
+      - path: /*
+        backend:
+          serviceName: argocd-server
+          servicePort: 80
+
+# Below are the other configurations from your initial values2.yaml,
+# ensure to review and integrate any additional configurations or customizations.
+
+configEnabled: true
+additionalApplications:
+  # Root app-of-apps definition
+  - name: app-of-apps
+    namespace: argo-cd
+    destination:
       namespace: argo-cd
-      destination:
-        namespace: argo-cd
-        server: https://kubernetes.default.svc
-      project: argocd
-      source:
-        path: apps
+      server: https://kubernetes.default.svc
+    project: argocd
+    source:
+      path: apps
+      repoURL: https://github.com/gaskin23/microservices-demo.git
+      targetRevision: HEAD
+      directory:
+        recurse: true
+    syncPolicy:
+      automated:
+        selfHeal: true
+        prune: true
+    # Applications under the root app
+    apps:
+      - name: microservices-demo
+        path: release/kubernetes-manifests.yaml
         repoURL: https://github.com/gaskin23/microservices-demo.git
         targetRevision: HEAD
-        directory:
-          recurse: true
-      syncPolicy:
-        automated:
-          selfHeal: true
-          prune: true
-      # Applications under the root app
-      apps:
-        - name: microservices-demo
-          path: release/kubernetes-manifests.yaml
-          repoURL: https://github.com/gaskin23/microservices-demo.git
-          targetRevision: HEAD
-  # Other configuration for ArgoCD remains unchanged
-  additionalProjects:
-  - name: argocd
-    namespace: argo-cd
-    additionalLabels: {}
-    additionalAnnotations: {}
-    description: ArgoCD Project
-    sourceRepos:
-    - '*'
-    destinations:
-    - namespace: argo-cd
-      server: https://kubernetes.default.svc
-    clusterResourceWhitelist:
-    - group: '*'
-      kind: '*'
-    orphanedResources:
-      warn: false
+additionalProjects:
+- name: argocd
+  namespace: argo-cd
+  additionalLabels: {}
+  additionalAnnotations: {}
+  description: ArgoCD Project
+  sourceRepos:
+  - '*'
+  destinations:
+  - namespace: argo-cd
+    server: https://kubernetes.default.svc
+  clusterResourceWhitelist:
+  - group: '*'
+    kind: '*'
+  orphanedResources:
+    warn: false
