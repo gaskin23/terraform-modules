@@ -41,7 +41,7 @@ resource "helm_release" "loadbalancer_controller" {
   }
 
   set {
-    name  = "guardian"
+    name  = "clusterName"
     value = var.eks_name
   }
 }
