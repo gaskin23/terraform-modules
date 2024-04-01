@@ -69,7 +69,7 @@ resource "aws_security_group" "rds" {
     from_port   = 5432
     to_port     = 5432
     protocol    = "tcp"
-    security_groups = [data.aws_security_group.eks.id] # Corrected reference here
+    security_groups = [data.aws_security_group.this.id] # Corrected reference here
   }
 
   egress {
