@@ -41,22 +41,22 @@ resource "aws_eks_cluster" "this" {
   depends_on = [aws_iam_role_policy_attachment.eks,aws_cloudwatch_log_group.this]
 }
 
-resource "aws_security_group" "this" {
-  name        = "${var.env}-${var.eks_name}-eks-sg"
-  description = "Security group for ${var.env} environment EKS cluster"
-  vpc_id      = data.aws_vpc.eks.id
+# resource "aws_security_group" "this" {
+#   name        = "${var.env}-${var.eks_name}-eks-sg"
+#   description = "Security group for ${var.env} environment EKS cluster"
+#   vpc_id      = data.aws_vpc.eks.id
 
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
+#   egress {
+#     from_port   = 0
+#     to_port     = 0
+#     protocol    = "-1"
+#     cidr_blocks = ["0.0.0.0/0"]
+#   }
 
-  tags = {
-    Name = "${var.env}-${var.eks_name}-eks-sg"
-  }
-}
+#   tags = {
+#     Name = "${var.env}-${var.eks_name}-eks-sg"
+#   }
+# }
 
 
 resource "aws_cloudwatch_log_group" "this" {

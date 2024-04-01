@@ -6,6 +6,6 @@ output "openid_provider_arn" {
   value = aws_iam_openid_connect_provider.this[0].arn
 }
 
-output "security_group_id" {
-  value = aws_security_group.this.id
-}
+# output "security_group_id" {
+#   value = aws_security_group.this.id
+# }
