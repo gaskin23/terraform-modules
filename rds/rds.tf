@@ -12,7 +12,7 @@ resource "aws_db_instance" "this" {
   instance_class       = var.rds_instance_class
   db_name              = var.rds_db_name
   username             = var.rds_username
-  password             = data.aws_secretsmanager_secret_version.rds_password.secret_string
+  password             = aws_secretsmanager_secret_version.rds_password.secret_string
   vpc_security_group_ids = [aws_security_group.rds.id]
   db_subnet_group_name = aws_db_subnet_group.this.name
   skip_final_snapshot  = true
