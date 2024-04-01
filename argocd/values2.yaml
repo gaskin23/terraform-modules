@@ -20,8 +20,7 @@ server:
         alb.ingress.kubernetes.io/target-type: ip
       # Additional ALB-specific annotations may be required depending on your setup
     paths:
-      - path: /*
-        pathType: ImplementationSpecific
+      - pathType: ImplementationSpecific
         backend:
           service:
             name: argo-cd

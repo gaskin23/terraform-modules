@@ -1,7 +1,3 @@
-# locals {
-#   oidc_issuer_url = "https://oidc.eks.us-east-1.amazonaws.com/id/A8AD3EF897F7244C5A1A3531F7EF35EA"# Adjust based on actual module name and structure
-# }
-
 data "aws_iam_openid_connect_provider" "argo" {
   arn = var.openid_provider_arn
 }
