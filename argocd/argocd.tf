@@ -1,5 +1,9 @@
-locals {
-  oidc_issuer_url = "https://oidc.eks.us-east-1.amazonaws.com/id/A8AD3EF897F7244C5A1A3531F7EF35EA"# Adjust based on actual module name and structure
+# locals {
+#   oidc_issuer_url = "https://oidc.eks.us-east-1.amazonaws.com/id/A8AD3EF897F7244C5A1A3531F7EF35EA"# Adjust based on actual module name and structure
+# }
+
+data "aws_iam_openid_connect_provider" "argo" {
+  arn = var.openid_provider_arn
 }
 
 
@@ -11,7 +15,7 @@ module "iam_assumable_role_oidc" {
   create_role = true
   role_name   = "k8s-argocd-admin"
   #provider_url = replace(data.terraform_remote_state.kubeconfig_file.outputs.cluster_oidc_issuer_url, "https://", "")
-  provider_url                  = local.oidc_issuer_url
+  provider_url                  = data.aws_iam_openid_connect_provider.argo.arn
   role_policy_arns              = []
   oidc_fully_qualified_subjects = ["system:serviceaccount:${var.argocd_k8s_namespace}:argocd-server", "system:serviceaccount:${var.argocd_k8s_namespace}:argocd-application-controller"]
   depends_on = [
