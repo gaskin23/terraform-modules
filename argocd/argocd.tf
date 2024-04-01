@@ -15,9 +15,7 @@ module "iam_assumable_role_oidc" {
   role_policy_arns              = []
   oidc_fully_qualified_subjects = ["system:serviceaccount:${var.argocd_k8s_namespace}:argocd-server", "system:serviceaccount:${var.argocd_k8s_namespace}:argocd-application-controller"]
   depends_on = [
-    aws_eks_node_group.this,
-    kubernetes_namespace.namespace_argocd,
-    aws_eks_cluster.this
+    kubernetes_namespace.namespace_argocd
   ]
 }
 
@@ -68,7 +66,6 @@ resource "helm_release" "argocd" {
   }
 
   depends_on = [
-    aws_eks_node_group.this,
     kubernetes_namespace.namespace_argocd,
     module.iam_assumable_role_oidc
   ]
