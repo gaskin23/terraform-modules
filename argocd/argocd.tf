@@ -1,5 +1,5 @@
 locals {
-  oidc_issuer_url = aws_eks_cluster.this.identity[0].oidc[0].issuer # Adjust based on actual module name and structure
+  oidc_issuer_url = "https://oidc.eks.us-east-1.amazonaws.com/id/A8AD3EF897F7244C5A1A3531F7EF35EA"# Adjust based on actual module name and structure
 }
 
 
