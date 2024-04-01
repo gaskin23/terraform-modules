@@ -1,6 +1,6 @@
-data "aws_security_group" "this" {
-  id = var.security_group_id
-}
+# data "aws_security_group" "this" {
+#   id = var.security_group_id
+# }
 
 
 
@@ -13,7 +13,7 @@ resource "aws_db_instance" "this" {
   db_name              = var.rds_db_name
   username             = var.rds_username
   password             = aws_secretsmanager_secret_version.rds_password.secret_string
-  vpc_security_group_ids = [aws_security_group.rds.id]
+  # vpc_security_group_ids = [aws_security_group.rds.id]
   db_subnet_group_name = aws_db_subnet_group.this.name
   skip_final_snapshot  = true
 
@@ -60,25 +60,25 @@ data "aws_vpc" "rds" {
   id = var.vpc_id
 }
 
-resource "aws_security_group" "rds" {
-  name        = "rds-sg"
-  description = "Allow all inbound traffic from EKS"
-  vpc_id      = data.aws_vpc.rds.id
+# resource "aws_security_group" "rds" {
+#   name        = "rds-sg"
+#   description = "Allow all inbound traffic from EKS"
+#   vpc_id      = data.aws_vpc.rds.id
 
-  ingress {
-    from_port   = 5432
-    to_port     = 5432
-    protocol    = "tcp"
-    security_groups = [data.aws_security_group.this.id] # Corrected reference here
-  }
+#   ingress {
+#     from_port   = 5432
+#     to_port     = 5432
+#     protocol    = "tcp"
+#     security_groups = [data.aws_security_group.this.id] # Corrected reference here
+#   }
 
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-}
+#   egress {
+#     from_port   = 0
+#     to_port     = 0
+#     protocol    = "-1"
+#     cidr_blocks = ["0.0.0.0/0"]
+#   }
+# }
 
 
 output "rds_endpoint" {

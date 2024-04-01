@@ -49,4 +49,4 @@ variable "rds_db_subnet_group_name" {
   type        = string
 }
 
-variable "security_group_id" {}
+# variable "security_group_id" {}
