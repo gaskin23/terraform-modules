@@ -37,7 +37,7 @@ resource "helm_release" "loadbalancer_controller" {
 
   set {
     name  = "region"
-    value = us-east-1
+    value = "us-east-1"
   }
 
   set {
