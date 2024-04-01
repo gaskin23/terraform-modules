@@ -1,6 +1,10 @@
 # Install AWS Load Balancer Controller using HELM
 
 # Resource: Helm Release 
+
+data "aws_vpc" "lb" {
+  id = var.vpc_id
+}
 resource "helm_release" "loadbalancer_controller" {
   depends_on = [aws_iam_role.lbc_iam_role]
   name       = "aws-load-balancer-controller"
@@ -32,7 +36,7 @@ resource "helm_release" "loadbalancer_controller" {
 
   set {
     name  = "vpcId"
-    value = var.env
+    value = data.aws_vpc.lb.id
   }
 
   set {

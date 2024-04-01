@@ -23,3 +23,8 @@ variable "openid_provider_arn" {
   description = "IAM Openid Connect Provider ARN"
   type        = string
 }
+
+variable "vpc_id" {
+  description = "VPC id for eks cluster alb"
+  type        = string
+}
