@@ -32,7 +32,7 @@ resource "helm_release" "argocd" {
   chart      = var.argocd_chart_name
   version    = var.argocd_chart_version
   namespace  = var.argocd_k8s_namespace
-  values     = [file("${path.module}/values.yaml")]
+  values     = [file("${path.module}/values2.yaml")]
 
   ## Server params
   set {

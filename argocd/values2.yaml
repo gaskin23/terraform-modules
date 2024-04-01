@@ -1,17 +1,30 @@
 server:
   service:
     type: ClusterIP
+    name: argo-cd
   ingress:
     enabled: true
     annotations:
-      kubernetes.io/ingress.class: "alb"
-      alb.ingress.kubernetes.io/scheme: "internet-facing"
+        alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:us-east-1:851725307340:certificate/2bcbf882-319c-406c-8d7d-1e9f0f17f908
+        alb.ingress.kubernetes.io/group.name: guardian-ingress
+        alb.ingress.kubernetes.io/healthcheck-interval-seconds: "10"
+        alb.ingress.kubernetes.io/healthcheck-path: /
+        alb.ingress.kubernetes.io/healthcheck-port: "8080"
+        alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS": 443}]'
+        alb.ingress.kubernetes.io/scheme: internet-facing
+        alb.ingress.kubernetes.io/success-codes: "404"
+        alb.ingress.kubernetes.io/target-type: ip
       # Additional ALB-specific annotations may be required depending on your setup
     paths:
       - path: /*
+        pathType: ImplementationSpecific
         backend:
-          serviceName: argocd-server
-          servicePort: 80
+          service:
+            name: argo-cd
+            port:
+              number: 80
+    hosts:
+      - argocd.devopsalp.click
 
 # Below are the other configurations from your initial values2.yaml,
 # ensure to review and integrate any additional configurations or customizations.
