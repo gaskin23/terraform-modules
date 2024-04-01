@@ -1,5 +1,5 @@
 data "aws_security_group" "eks" {
-  id = var.security_group_id
+  id = var.eks_cluster_security_group_id
 }
 
 
