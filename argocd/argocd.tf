@@ -34,11 +34,10 @@ resource "kubernetes_manifest" "voltran_app_project" {
     helm_release.argocd
   ]
 }
-
 resource "kubernetes_manifest" "app_of_apps" {
   provider = kubernetes
 
-  manifest = yamldecode(file("${path.module}/manifests//app-of-apps.yaml"))
+  manifest = yamldecode(file("${path.module}/manifests/app-of-apps.yaml"))
 
   depends_on = [
     kubernetes_manifest.voltran_app_project
@@ -53,7 +52,7 @@ resource "helm_release" "argocd" {
   chart      = var.argocd_chart_name
   version    = var.argocd_chart_version
   namespace  = var.argocd_k8s_namespace
-  values     = [file("${path.module}/manifests//values.yaml")]
+  values     = [file("${path.module}/manifests/values.yaml")]
 
   ## Server params
 
