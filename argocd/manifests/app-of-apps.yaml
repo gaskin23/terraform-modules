@@ -1,21 +1,3 @@
-apiVersion: argoproj.io/v1alpha1
-kind: AppProject
-metadata:
-  name: voltran
-  namespace: argocd
-spec:
-  description: Voltran Project
-  sourceRepos:
-  - '*'
-  destinations:
-  - namespace: argocd
-    server: https://kubernetes.default.svc
-  - namespace: '*'
-    server: '*'
-  clusterResourceWhitelist:
-  - group: '*'
-    kind: '*'
-
 ---
 apiVersion: argoproj.io/v1alpha1
 kind: Application
