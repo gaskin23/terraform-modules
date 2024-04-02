@@ -26,8 +26,6 @@ resource "kubernetes_namespace" "namespace_argocd" {
 }
 
 resource "kubernetes_manifest" "voltran_app_project" {
-  provider = kubernetes
-
   manifest = yamldecode(file("${path.module}/manifests/voltran-app-project.yaml"))
 
   depends_on = [
@@ -35,7 +33,6 @@ resource "kubernetes_manifest" "voltran_app_project" {
   ]
 }
 resource "kubernetes_manifest" "app_of_apps" {
-  provider = kubernetes
 
   manifest = yamldecode(file("${path.module}/manifests/app-of-apps.yaml"))
 
