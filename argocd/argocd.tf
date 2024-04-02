@@ -25,12 +25,39 @@ resource "kubernetes_namespace" "namespace_argocd" {
   }
 }
 
-resource "kubernetes_manifest" "voltran_app_project" {
-  manifest = yamldecode(file("${path.module}/manifests/voltran-app-project.yaml"))
+# resource "kubernetes_manifest" "voltran_app_project" {
+#   manifest = yamldecode(file("${path.module}/manifests/voltran-app-project.yaml"))
 
+#   depends_on = [
+#     helm_release.argocd
+#   ]
+# }
+
+
+# Resource for AppProject (as a raw manifest)
+resource "kubernetes_manifest" "appproject" {
+  manifest = <<EOF
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: voltran
+  namespace: argocd
+spec:
+  description: Voltran Project
+  sourceRepos:
+  - '*'
+  destinations:
+  - namespace: argocd
+    server: https://kubernetes.default.svc
+  - namespace: '*'
+    server: '*'
+  clusterResourceWhitelist:
+  - group: '*'
+    kind: '*'
+EOF
   depends_on = [
     helm_release.argocd
-  ]
+   ]
 }
 resource "kubernetes_manifest" "app_of_apps" {
 
