@@ -54,6 +54,7 @@ variable "rds_db_subnet_group_name" {
 variable "rds_cpu_utilization_threshold" {
   description = "The CPU utilization percentage that triggers the CloudWatch alarm for the RDS instance."
   type        = number
+  default     = 75
 }
 
 variable "cpu_evaluation_periods" {
