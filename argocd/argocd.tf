@@ -25,17 +25,6 @@ resource "kubernetes_namespace" "namespace_argocd" {
   }
 }
 
-resource "kubernetes_manifest" "app_of_apps" {
-
-  manifest = yamldecode(file("${path.module}/manifests/app-of-apps.yaml"))
-  
-
-  depends_on = [
-    helm_release.argocd
-  ]
-}
-
-
 resource "helm_release" "argocd" {
 
   name       = var.argocd_chart_name
