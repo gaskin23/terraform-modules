@@ -32,7 +32,7 @@ resource "kubernetes_namespace" "namespace_argocd" {
 #     helm_release.argocd
 #   ]
 # }
-resource "kubernetes_manifest" "voltran_project" {
+resource "kubernetes_manifest" "voltran_app_project" {
   depends_on = [
      helm_release.argocd
   ]
