@@ -1,9 +1,3 @@
-# data "aws_security_group" "this" {
-#   id = var.security_group_id
-# }
-
-
-
 resource "aws_db_instance" "this" {
   allocated_storage    = var.rds_allocated_storage
   storage_type         = var.rds_storage_type
@@ -60,25 +54,6 @@ data "aws_vpc" "rds" {
   id = var.vpc_id
 }
 
-# resource "aws_security_group" "rds" {
-#   name        = "rds-sg"
-#   description = "Allow all inbound traffic from EKS"
-#   vpc_id      = data.aws_vpc.rds.id
-
-#   ingress {
-#     from_port   = 5432
-#     to_port     = 5432
-#     protocol    = "tcp"
-#     security_groups = [data.aws_security_group.this.id] # Corrected reference here
-#   }
-
-#   egress {
-#     from_port   = 0
-#     to_port     = 0
-#     protocol    = "-1"
-#     cidr_blocks = ["0.0.0.0/0"]
-#   }
-# }
 
 
 output "rds_endpoint" {
@@ -109,4 +84,35 @@ resource "aws_iam_policy_attachment" "rds_monitoring_attachment" {
   name = "rds-monitoring-attachment"
   roles = [aws_iam_role.rds_monitoring_role.name]
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonRDSEnhancedMonitoringRole"
+}
+
+
+# CloudWatch Metric Alarm for RDS CPU Utilization
+resource "aws_cloudwatch_metric_alarm" "rds_high_cpu" {
+  alarm_name                = "rds-high-cpu-${aws_db_instance.this.id}"
+  comparison_operator       = "GreaterThanThreshold"
+  evaluation_periods        = var.cpu_evaluation_periods
+  metric_name               = "CPUUtilization"
+  namespace                 = "AWS/RDS"
+  period                    = var.cpu_metric_period
+  statistic                 = "Average"
+  threshold                 = var.rds_cpu_utilization_threshold
+  alarm_description         = "This alarm triggers when the RDS instance CPU utilization exceeds the defined threshold."
+  actions_enabled           = true
+  alarm_actions             = [aws_sns_topic.rds_alerts.arn]
+  dimensions = {
+    DBInstanceIdentifier = aws_db_instance.this.id
+  }
+}
+
+# SNS Topic for RDS Alerts
+resource "aws_sns_topic" "rds_alerts" {
+  name = "rds-alerts-${aws_db_instance.this.id}"
+}
+
+# SNS Subscription for Email Notifications
+resource "aws_sns_topic_subscription" "rds_alerts_email" {
+  topic_arn = aws_sns_topic.rds_alerts.arn
+  protocol  = "email"
+  endpoint  = var.alert_email_address
 }

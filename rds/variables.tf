@@ -49,4 +49,27 @@ variable "rds_db_subnet_group_name" {
   type        = string
 }
 
-# variable "security_group_id" {}
+# Existing variables for the RDS instance
+
+variable "rds_cpu_utilization_threshold" {
+  description = "The CPU utilization percentage that triggers the CloudWatch alarm for the RDS instance."
+  type        = number
+}
+
+variable "cpu_evaluation_periods" {
+  description = "The number of evaluation periods for the CPU utilization alarm."
+  type        = number
+  default     = 2
+}
+
+variable "cpu_metric_period" {
+  description = "The period in seconds over which the specified statistic is applied."
+  type        = number
+  default     = 300
+}
+
+variable "alert_email_address" {
+  description = "The email address to receive alerts for RDS CloudWatch alarms."
+  type        = string
+  default     = "gashcin23@gmail.com"
+}
