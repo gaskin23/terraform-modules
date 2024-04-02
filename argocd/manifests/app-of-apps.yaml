@@ -10,7 +10,7 @@ spec:
   destination:
     name: in-cluster
     namespace: argocd
-  project: voltran
+  project: default
   source:
     path: demo/apps
     repoURL: https://github.com/gaskin23/guardian-task
