@@ -5,16 +5,16 @@ metadata:
   finalizers:
   - resources-finalizer.argocd.argoproj.io
   name: app-of-apps
-  namespace: argocd
+  namespace: argo-cd
 spec:
   destination:
     name: in-cluster
-    namespace: argocd
-  project: default
+    namespace: argo-cd
+  project: voltran
   source:
     path: demo/apps
     repoURL: https://github.com/gaskin23/guardian-task
-    targetRevision: main
+    targetRevision: master
   syncPolicy:
     automated:
       allowEmpty: true

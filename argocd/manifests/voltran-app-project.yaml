@@ -3,7 +3,7 @@ apiVersion: argoproj.io/v1alpha1
 kind: AppProject
 metadata:
   name: voltran
-  namespace: argocd
+  namespace: argo-cd
 spec:
   description: Voltran Project
   sourceRepos:
