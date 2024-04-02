@@ -11,7 +11,7 @@ variable "argocd_chart_name" {
 
 variable "argocd_k8s_namespace" {
   type    = string
-  default = "argo-cd"
+  default = "argocd"
 }
 
 variable "env" {

@@ -1,7 +1,3 @@
-variable "vpc_id" {
-  description = "VPC id for eks cluster alb"
-  type        = string
-}
 variable "env" {
   description = "Environment name."
   type        = string

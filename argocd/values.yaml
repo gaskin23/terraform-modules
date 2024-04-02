@@ -22,31 +22,3 @@ server:
     aws:
       serviceType: ClusterIP # <- Used with target-type: ip
       backendProtocolVersion: GRPC
-  additionalApplications:
-    - name: app-of-apps
-      namespace: argo-cd
-      additionalLabels: {}
-      additionalAnnotations:
-        "helm.sh/resource-policy": keep # <-- add this
-      finalizers:
-      - resources-finalizer.argocd.argoproj.io
-      project: argocd
-      source:
-        repoURL: https://github.com/gaskin23/microservices-demo.git
-        targetRevision: HEAD
-        path: apps
-        directory:
-          recurse: true
-      destination:
-        server: https://kubernetes.default.svc
-        namespace: argo-cd
-      syncPolicy:
-        automated:
-          prune: false
-          selfHeal: false
-      # Applications under the root app
-      apps:
-      - name: microservices-demo
-        path: release/kubernetes-manifests.yaml
-        repoURL: https://github.com/gaskin23/microservices-demo.git
-

@@ -34,10 +34,6 @@ variable "rds_username" {
   default     = "postgres"
 }
 
-variable "vpc_id" {
-  description = "The VPC ID where the RDS instance and EKS are deployed"
-  type        = string
-}
 
 variable "private_subnet_ids" {
   description = "A list of private subnet IDs for the RDS instance"

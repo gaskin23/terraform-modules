@@ -25,6 +25,4 @@ variable "openid_provider_arn" {
 }
 
 variable "vpc_id" {
-  description = "VPC id for eks cluster alb"
-  type        = string
 }

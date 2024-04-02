@@ -7,8 +7,6 @@ resource "aws_db_instance" "this" {
   db_name              = var.rds_db_name
   username             = var.rds_username
   manage_master_user_password = true
-  #password             = aws_secretsmanager_secret_version.rds_password.secret_string
-  # vpc_security_group_ids = [aws_security_group.rds.id]
   db_subnet_group_name = aws_db_subnet_group.this.name
   skip_final_snapshot  = true
 
@@ -34,27 +32,6 @@ resource "aws_db_subnet_group" "this" {
     Name = "demo-rds"
   }
 }
-
-
-# resource "aws_secretsmanager_secret" "rds_password" {
-#   name = "rds_password"
-# }
-
-# resource "aws_secretsmanager_secret_version" "rds_password" {
-#   secret_id     = aws_secretsmanager_secret.rds_password.id
-#   secret_string = random_password.password.result
-# }
-
-# resource "random_password" "password" {
-#   length  = 16
-#   special = true
-# }
-
-
-data "aws_vpc" "rds" {
-  id = var.vpc_id
-}
-
 
 
 output "rds_endpoint" {
