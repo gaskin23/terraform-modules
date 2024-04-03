@@ -19,6 +19,20 @@ module "iam_assumable_role_oidc" {
   ]
 }
 
+data "kubectl_file_documents" "argo_cred" {
+  content = [file("${path.module}/manifests/secret.yaml")]
+}
+
+resource "kubectl_manifest" "crds_apply" {
+  for_each  = data.kubectl_file_documents.argo_cred.manifests
+  yaml_body = each.value
+  wait = true
+  server_side_apply = true
+  depends_on = [
+    helm_release.argocd
+  ]
+}
+
 resource "kubernetes_namespace" "namespace_argocd" {
   metadata {
     name = var.argocd_k8s_namespace

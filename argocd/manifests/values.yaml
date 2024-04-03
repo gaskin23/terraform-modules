@@ -22,7 +22,7 @@ server:
       backendProtocolVersion: GRPC
 applications:
 - name: app-of-apps
-  namespace: default
+  namespace: argocd
   project: default
   source:
     repoURL: https://github.com/gaskin23/guardian-task.git # Use HTTPS URL
@@ -33,7 +33,7 @@ applications:
       name: git-repo-creds
   destination:
     name: in-cluster
-    namespace: default
+    namespace: argocd
   syncPolicy:
     automated:
       allowEmpty: true

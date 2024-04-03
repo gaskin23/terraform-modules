@@ -6,7 +6,7 @@ variable "argocd_chart_version" {
 
 variable "argocd_chart_name" {
   type    = string
-  default = "argo-cd"
+  default = "argocd"
 }
 
 variable "argocd_k8s_namespace" {
