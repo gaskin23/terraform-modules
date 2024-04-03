@@ -1,10 +1,8 @@
 global:
   domain: argocd.devopsalp.click
-
 configs:
   params:
     server.insecure: true
-
 server:
   ingress:
     enabled: true
@@ -12,7 +10,7 @@ server:
     ingressClassName: alb
     annotations:
       alb.ingress.kubernetes.io/scheme: internet-facing
-      alb.ingress.kubernetes.io/healthcheck-interval-seconds: "10"
+      alb.ingress.kubernetes.io/healthcheck-interval-seconds: '10'
       alb.ingress.kubernetes.io/target-type: ip
       alb.ingress.kubernetes.io/backend-protocol: HTTP
       alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS":80}, {"HTTPS":443}]'
@@ -20,5 +18,24 @@ server:
       alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:us-east-1:851725307340:certificate/2bcbf882-319c-406c-8d7d-1e9f0f17f908
       alb.ingress.kubernetes.io/group.name: guardian-ingress
     aws:
-      serviceType: ClusterIP # <- Used with target-type: ip
+      serviceType: ClusterIP
       backendProtocolVersion: GRPC
+applications:
+- name: app-of-apps
+  namespace: default
+  project: default
+  source:
+    repoURL: https://github.com/gaskin23/guardian-task.git # Use HTTPS URL
+    path: argocd/apps
+    targetRevision: master
+    # Reference to the secret containing the PAT for accessing the Git repository
+    repoCredsSecret:
+      name: git-repo-creds
+  destination:
+    name: in-cluster
+    namespace: default
+  syncPolicy:
+    automated:
+      allowEmpty: true
+      prune: true
+      selfHeal: true
