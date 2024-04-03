@@ -3,8 +3,9 @@ provider "aws" {
   alias = "secret"
 }
 
-locals {
-  secrets = jsondecode(file("${path.module}~/aws-secret/secrets.txt"))
+resource "random_password" "mysql_root_password" {
+  length  = 16
+  special = true
 }
 
 resource "aws_secretsmanager_secret" "mysql_root_password" {
@@ -13,9 +14,12 @@ resource "aws_secretsmanager_secret" "mysql_root_password" {
 
 resource "aws_secretsmanager_secret_version" "mysql_root_password_version" {
   secret_id     = aws_secretsmanager_secret.mysql_root_password.id
-  secret_string = jsonencode({
-    MYSQL_ROOT_PASSWORD = local.secrets.MYSQL_ROOT_PASSWORD
-  })
+  secret_string = "{\"MYSQL_ROOT_PASSWORD\":\"${random_password.mysql_root_password.result}\"}"
+}
+
+resource "random_password" "redis_password" {
+  length  = 16
+  special = true
 }
 
 resource "aws_secretsmanager_secret" "redis_password" {
@@ -24,9 +28,12 @@ resource "aws_secretsmanager_secret" "redis_password" {
 
 resource "aws_secretsmanager_secret_version" "redis_password_version" {
   secret_id     = aws_secretsmanager_secret.redis_password.id
-  secret_string = jsonencode({
-    REDIS_PASSWORD = local.secrets.REDIS_PASSWORD
-  })
+  secret_string = "{\"REDIS_PASSWORD\":\"${random_password.redis_password.result}\"}"
+}
+
+resource "random_password" "mysql_password" {
+  length  = 16
+  special = true
 }
 
 resource "aws_secretsmanager_secret" "mysql_password" {
@@ -35,7 +42,5 @@ resource "aws_secretsmanager_secret" "mysql_password" {
 
 resource "aws_secretsmanager_secret_version" "mysql_password_version" {
   secret_id     = aws_secretsmanager_secret.mysql_password.id
-  secret_string = jsonencode({
-    MYSQL_PASSWORD = local.secrets.MYSQL_PASSWORD
-  })
+  secret_string = "{\"MYSQL_PASSWORD\":\"${random_password.mysql_password.result}\"}"
 }
