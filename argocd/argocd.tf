@@ -19,9 +19,11 @@ module "iam_assumable_role_oidc" {
   ]
 }
 
+
 data "kubectl_file_documents" "argo_cred" {
-  content = [file("manifests/secret.yaml")]
+  content = file("manifests/secret.yaml")
 }
+
 
 resource "kubectl_manifest" "crds_apply" {
   for_each  = data.kubectl_file_documents.argo_cred.manifests
