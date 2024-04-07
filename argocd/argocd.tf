@@ -19,26 +19,41 @@ module "iam_assumable_role_oidc" {
   ]
 }
 
-resource "kubectl_manifest" "argocd_private_repo" {
-  depends_on = [
-    helm_release.argocd
-  ]
-  yaml_body = <<-YAML
-  apiVersion: v1
-  kind: Secret
-  metadata:
-    name: argocd-private-repo
-    namespace: argocd
-    labels:
-      argocd.argoproj.io/secret-type: repository
-  stringData:
-    url: git@github.com:gaskin23/guardian-task.git
-    sshPrivateKey: |
-      ${file(var.private_key_path)}
-    insecure: "false"
-    enableLfs: "true"
-  YAML
+data "template_file" "argocd_private_repo" {
+  template = file("${path.module}/manifests/argocd-private-repo.tpl")
+
+  vars = {
+    ssh_private_key = file(var.private_key_path)
+  }
 }
+
+
+resource "kubectl_manifest" "argocd_private_repo" {
+  depends_on = [helm_release.argocd]
+  yaml_body = data.template_file.argocd_private_repo.rendered
+}
+
+
+# resource "kubectl_manifest" "argocd_private_repo" {
+#   depends_on = [
+#     helm_release.argocd
+#   ]
+#   yaml_body = <<-YAML
+#   apiVersion: v1
+#   kind: Secret
+#   metadata:
+#     name: argocd-private-repo
+#     namespace: argocd
+#     labels:
+#       argocd.argoproj.io/secret-type: repository
+#   stringData:
+#     url: git@github.com:gaskin23/guardian-task.git
+#     sshPrivateKey: |
+#       ${file(var.private_key_path)}
+#     insecure: "false"
+#     enableLfs: "true"
+#   YAML
+# }
 resource "kubernetes_namespace" "namespace_argocd" {
   metadata {
     name = var.argocd_k8s_namespace
