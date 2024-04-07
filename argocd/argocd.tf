@@ -19,22 +19,26 @@ module "iam_assumable_role_oidc" {
   ]
 }
 
-
-data "kubectl_file_documents" "argo_cred" {
-  content = file("manifests/secret.yaml")
-}
-
-
-resource "kubectl_manifest" "crds_apply" {
-  for_each  = data.kubectl_file_documents.argo_cred.manifests
-  yaml_body = each.value
-  wait = true
-  server_side_apply = true
+resource "kubectl_manifest" "argocd_private_repo" {
   depends_on = [
     helm_release.argocd
   ]
+  yaml_body = <<-YAML
+  apiVersion: v1
+  kind: Secret
+  metadata:
+    name: argocd-private-repo
+    namespace: argocd
+    labels:
+      argocd.argoproj.io/secret-type: repository
+  stringData:
+    url: git@github.com:gaskin23/guardian-task.git
+    sshPrivateKey: |
+      ${file(var.private_key_path)}
+    insecure: "false"
+    enableLfs: "true"
+  YAML
 }
-
 resource "kubernetes_namespace" "namespace_argocd" {
   metadata {
     name = var.argocd_k8s_namespace

@@ -28,3 +28,8 @@ variable "openid_provider_arn" {
   description = "IAM Openid Connect Provider ARN"
   type        = string
 }
+
+variable "private_key_path" {
+  description = "Path to the SSH private key"
+  default     = "~/.ssh/id_rsa"
+}
