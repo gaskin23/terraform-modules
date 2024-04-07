@@ -70,3 +70,8 @@ variable "alert_email_address" {
   type        = string
   default     = "gashcin23@gmail.com"
 }
+
+variable "eks_name" {
+  description = "Name of the cluster."
+  type        = string
+}
