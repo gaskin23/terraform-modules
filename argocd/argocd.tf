@@ -20,6 +20,9 @@ module "iam_assumable_role_oidc" {
 }
 
 resource "kubernetes_secret" "argocd_private_repo" {
+  depends_on = [
+    helm_release.argocd
+  ]
   metadata {
     name      = "argocd-private-repo"
     namespace = "argocd"
