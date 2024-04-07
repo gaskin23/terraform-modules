@@ -1,3 +1,9 @@
+provider "argocd" {
+  use_local_config = true
+}
+
+
+
 data "aws_iam_openid_connect_provider" "argo" {
   arn = var.openid_provider_arn
 }
