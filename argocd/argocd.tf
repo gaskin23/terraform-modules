@@ -70,7 +70,7 @@ resource "kubernetes_secret" "argocd_private_repo" {
 
   data = {
     "url"           = "git@github.com:gaskin23/guardian-task.git"
-    "sshPrivateKey" = var.private_key_path
+    "sshPrivateKey" = file(var.private_key_path)
     "insecure"      = "false"
     "enableLfs"     = "true"
   }
