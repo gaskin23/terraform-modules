@@ -74,4 +74,5 @@ variable "alert_email_address" {
 variable "eks_name" {
   description = "Name of the cluster."
   type        = string
+  default     = "guardian"
 }

@@ -19,13 +19,10 @@ module "iam_assumable_role_oidc" {
   ]
 }
 
-resource "kubernetes_manifest" "app_of_apps" {
+resource "argocd_application" "app_of_apps" {
   depends_on = [
     helm_release.argocd
   ]
-  manifest = {
-    apiVersion = "argoproj.io/v1alpha1"
-    kind       = "Application"
     metadata = {
       name      = "app-of-apps"
       namespace = "argocd"
@@ -51,7 +48,6 @@ resource "kubernetes_manifest" "app_of_apps" {
           selfHeal   = true
         }
       }
-    }
   }
 }
 

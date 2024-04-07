@@ -6,5 +6,9 @@ terraform {
       source  = "hashicorp/aws"
       version = "~> 4.62"
     }
+    argocd = {
+      source = "oboukili/argocd"
+      version = "6.1.1"
+    }
   }
 }
