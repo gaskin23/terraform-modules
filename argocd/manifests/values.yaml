@@ -20,19 +20,3 @@ server:
     aws:
       serviceType: ClusterIP
       backendProtocolVersion: GRPC
-applications:
-- name: app-of-apps
-  namespace: argocd
-  project: default
-  source:
-    repoURL: git@github.com:gaskin23/guardian-task.git
-    path: argocd/apps
-    targetRevision: master
-  destination:
-    name: in-cluster
-    namespace: argocd
-  syncPolicy:
-    automated:
-      allowEmpty: true
-      prune: true
-      selfHeal: true

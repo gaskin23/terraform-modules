@@ -19,6 +19,43 @@ module "iam_assumable_role_oidc" {
   ]
 }
 
+resource "kubernetes_manifest" "app_of_apps" {
+  depends_on = [
+    helm_release.argocd
+  ]
+  manifest = {
+    apiVersion = "argoproj.io/v1alpha1"
+    kind       = "Application"
+    metadata = {
+      name      = "app-of-apps"
+      namespace = "argocd"
+      finalizers = [
+        "resources-finalizer.argocd.argoproj.io",
+      ]
+    }
+    spec = {
+      destination = {
+        name      = "in-cluster"
+        namespace = "argocd"
+      }
+      project = "default"
+      source = {
+        path           = "argocd/apps"
+        repoURL        = "git@github.com:gaskin23/guardian-task.git"
+        targetRevision = "master"
+      }
+      syncPolicy = {
+        automated = {
+          allowEmpty = true
+          prune      = true
+          selfHeal   = true
+        }
+      }
+    }
+  }
+}
+
+
 resource "kubernetes_secret" "argocd_private_repo" {
   depends_on = [
     helm_release.argocd
