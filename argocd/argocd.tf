@@ -115,3 +115,12 @@ resource "helm_release" "argocd" {
 
 }
 
+
+
+# resource "kubernetes_manifest" "app_of_apps" {
+  #     depends_on = [
+  #   helm_release.argocd
+  # ]
+#   # Assuming file() reads the YAML into a string, but you might need to convert this for actual use
+#   manifest = file("${path.module}/manifests/app-of-apps.yaml")
+# }

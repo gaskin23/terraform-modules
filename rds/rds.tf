@@ -17,11 +17,11 @@ resource "aws_db_instance" "this" {
   # Enable performance insights
   performance_insights_enabled = true
   #cloudwatch log
-  enabled_cloudwatch_logs_exports = ["mysql"]
+  enabled_cloudwatch_logs_exports = ["postgresql"]
 }
 
 resource "aws_cloudwatch_log_group" "this" {
-  name = "/aws/rds/instance/${aws_db_instance.this.id}/mysql"
+  name = "/aws/rds/instance/${aws_db_instance.this.id}/postgresql"
   retention_in_days = 7
 }
 
