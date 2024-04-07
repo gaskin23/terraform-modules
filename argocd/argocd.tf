@@ -20,34 +20,32 @@ module "iam_assumable_role_oidc" {
 }
 
 resource "argocd_application" "app_of_apps" {
-  depends_on = [
-    helm_release.argocd
-  ]
-    metadata = {
-      name      = "app-of-apps"
-      namespace = "argocd"
-      finalizers = [
-        "resources-finalizer.argocd.argoproj.io",
-      ]
+  metadata {
+    name      = "app-of-apps"
+    namespace = "argocd"
+  }
+
+  spec {
+    project = "default"
+
+    source {
+      repo_url        = "git@github.com:gaskin23/guardian-task.git"
+      path            = "argocd/apps"
+      target_revision = "master"
     }
-    spec = {
-      destination = {
-        name      = "in-cluster"
-        namespace = "argocd"
+
+    destination {
+      server    = "https://kubernetes.default.svc" # For in-cluster, use the Kubernetes API server URL
+      namespace = "argocd"
+    }
+
+    sync_policy {
+      automated {
+        prune      = true
+        self_heal  = true
+        allow_empty = true
       }
-      project = "default"
-      source = {
-        path           = "argocd/apps"
-        repoURL        = "git@github.com:gaskin23/guardian-task.git"
-        targetRevision = "master"
-      }
-      syncPolicy = {
-        automated = {
-          allowEmpty = true
-          prune      = true
-          selfHeal   = true
-        }
-      }
+    }
   }
 }
 
