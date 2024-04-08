@@ -1,11 +1,3 @@
-provider "argocd" {
-  server_addr = "argo-cd-argocd-server.argocd.svc.cluster.local:443"
-  username    = "admin"
-  password    = "aRC2LOQFluRUpZpe"
-}
-
-
-
 data "aws_iam_openid_connect_provider" "argo" {
   arn = var.openid_provider_arn
 }
@@ -27,34 +19,9 @@ module "iam_assumable_role_oidc" {
   ]
 }
 
-resource "argocd_application" "app_of_apps" {
-  metadata {
-    name      = "app-of-apps"
-    namespace = "argocd"
-  }
-
-  spec {
-    project = "default"
-
-    source {
-      repo_url        = "git@github.com:gaskin23/guardian-task.git"
-      path            = "argocd/apps"
-      target_revision = "master"
-    }
-
-    destination {
-      name = "in-cluster" # For in-cluster, use the Kubernetes API server URL
-      namespace = "argocd"
-    }
-
-    sync_policy {
-      automated {
-        prune      = true
-        self_heal  = true
-        allow_empty = true
-      }
-    }
-  }
+resource "kubernetes_manifest" "app_of_apps" {
+  depends_on = [ helm_release.argocd ]
+  manifest = yamldecode(file("${path.module}/manifests/app-of-apps.yaml"))
 }
 
 
