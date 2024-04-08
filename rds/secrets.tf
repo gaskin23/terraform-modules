@@ -50,6 +50,7 @@ resource "kubernetes_manifest" "db_passwords" {
     kind       = "ExternalSecret"
     metadata = {
       name      = "db-passwords"
+      namespace = "default"
     }
     spec = {
       refreshInterval = "1h"
