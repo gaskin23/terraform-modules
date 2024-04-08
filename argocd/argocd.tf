@@ -1,5 +1,5 @@
 provider "argocd" {
-  use_local_config = true
+  server_addr = "argocd-server.argocd.svc.cluster.local:443"
 }
 
 
@@ -41,7 +41,7 @@ resource "argocd_application" "app_of_apps" {
     }
 
     destination {
-      server    = "https://kubernetes.default.svc" # For in-cluster, use the Kubernetes API server URL
+      name = "in-cluster" # For in-cluster, use the Kubernetes API server URL
       namespace = "argocd"
     }
 
