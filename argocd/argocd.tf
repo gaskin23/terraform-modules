@@ -1,5 +1,7 @@
 provider "argocd" {
-  server_addr = "argocd-server.argocd.svc.cluster.local:443"
+  server_addr = "argo-cd-argocd-server.argocd.svc.cluster.local:443"
+  username    = "admin"
+  password    = "aRC2LOQFluRUpZpe"
 }
 
 
