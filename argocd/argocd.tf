@@ -19,9 +19,21 @@ module "iam_assumable_role_oidc" {
   ]
 }
 
-resource "kubernetes_manifest" "app_of_apps" {
-  depends_on = [ helm_release.argocd, kubernetes_secret.argocd_private_repo ]
-  manifest = yamldecode(file("${path.module}/manifests/app-of-apps.yaml"))
+# resource "kubernetes_manifest" "app_of_apps" {
+#   depends_on = [ helm_release.argocd, kubernetes_secret.argocd_private_repo ]
+#   manifest = yamldecode(file("${path.module}/manifests/app-of-apps.yaml"))
+# }
+
+data "kubectl_file_documents" "argocd" {
+  content = file("manifests/app-of-apps.yaml")
+}
+
+resource "kubectl_manifest" "argocd_app" {
+  depends_on = [ helm_release.argocd ]
+  for_each  = data.kubectl_file_documents.argocd.manifests
+  yaml_body = each.value
+  wait = true
+  server_side_apply = true
 }
 
 
