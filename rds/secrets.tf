@@ -43,7 +43,7 @@ resource "aws_secretsmanager_secret_version" "db_passwords_version" {
 ####### EXTERNAL SECRET ######
 
 resource "kubernetes_manifest" "db_passwords" {
-  depends_on = [aws_secretsmanager_secret_version.db_passwords_version]
+  depends_on = [aws_secretsmanager_secret_version.db_passwords_version, aws_iam_role.external_secrets_operator]
 
   manifest = {
     apiVersion = "external-secrets.io/v1beta1"
@@ -103,3 +103,51 @@ resource "kubernetes_manifest" "db_passwords" {
     }
   }
 }
+
+
+resource "aws_iam_policy" "secrets_manager_access" {
+  name        = "secrets_manager_access_policy"
+  description = "Policy to access secrets in AWS Secrets Manager"
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = [
+          "secretsmanager:GetSecretValue",
+          "secretsmanager:DescribeSecret",
+        ]
+        Effect   = "Allow"
+        Resource = "arn:aws:secretsmanager:us-east-1:934643182396:secret:db-passwords-*"
+      },
+    ]
+  })
+}
+
+resource "aws_iam_role" "external_secrets_operator" {
+  depends_on = [ aws_iam_policy.secrets_manager_access ]
+  name               = "external_secrets_operator_role"
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Principal = {
+          Service = "eks.amazonaws.com"
+        }
+        Action = "sts:AssumeRole"
+      },
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "secrets_manager_access_attachment" {
+  role       = aws_iam_role.external_secrets_operator.name
+  policy_arn = aws_iam_policy.secrets_manager_access.arn
+}
+
+
+# resource "kubernetes_manifest" "external_sa" {
+#   depends_on = [ aws_iam_role.external_secrets_operator ]
+#   manifest = yamldecode(file("${path.module}/manifests/external-sa.yaml"))
+# }

@@ -19,3 +19,27 @@ resource "aws_iam_role_policy_attachment" "nodes" {
   policy_arn = each.value
   role       = aws_iam_role.nodes.name
 }
+
+resource "aws_iam_policy" "cloudwatch_logs_policy" {
+  name        = "CloudWatchLogsPolicy"
+  description = "Policy for CloudWatch logs from EKS"
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "logs:CreateLogStream",
+          "logs:PutLogEvents",
+        ]
+        Resource = "arn:aws:logs:*:*:*"
+      },
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "cloudwatch_logs_policy_attachment" {
+  role       = aws_iam_role.nodes.name
+  policy_arn = aws_iam_policy.cloudwatch_logs_policy.arn
+}
