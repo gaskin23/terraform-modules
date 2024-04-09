@@ -71,6 +71,6 @@ resource "aws_iam_policy" "cloudwatch_logs_policy" {
 }
 
 resource "aws_iam_role_policy_attachment" "cloudwatch_logs_policy_attachment" {
-  role       = aws_iam_role.clouwatch_agent_role
+  role       = aws_iam_role.clouwatch_agent_role.name
   policy_arn = aws_iam_policy.cloudwatch_logs_policy.arn
 }
