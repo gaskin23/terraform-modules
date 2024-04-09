@@ -24,7 +24,7 @@ resource "random_password" "postgresql_password" {
 
 
 resource "aws_secretsmanager_secret" "db_passwords" {
-  name        = "db-passwords"
+  name        = "db-passwords2"
 }
 
 resource "aws_secretsmanager_secret_version" "db_passwords_version" {
@@ -49,7 +49,7 @@ resource "kubernetes_manifest" "db_passwords" {
     apiVersion = "external-secrets.io/v1beta1"
     kind       = "ExternalSecret"
     metadata = {
-      name      = "db-passwords2"
+      name      = "db-passwords"
       namespace = "default"
     }
     spec = {
