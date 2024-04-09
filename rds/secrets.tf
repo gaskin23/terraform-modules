@@ -49,7 +49,7 @@ resource "kubernetes_manifest" "db_passwords" {
     apiVersion = "external-secrets.io/v1beta1"
     kind       = "ExternalSecret"
     metadata = {
-      name      = "db-passwords"
+      name      = "db-passwords2"
       namespace = "default"
     }
     spec = {
