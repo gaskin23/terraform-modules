@@ -165,7 +165,7 @@ data "kubectl_file_documents" "store" {
 }
 
 resource "kubectl_manifest" "secret_store" {
-  depends_on = [ aws_iam_role.external_secrets_operator ]
+  depends_on = [ aws_iam_role.external_secrets_operator_role ]
   for_each  = data.kubectl_file_documents.store.manifests
   yaml_body = each.value
   wait = true
