@@ -1,7 +1,0 @@
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: external-secrets-operator
-  namespace: default
-  annotations:
-    eks.amazonaws.com/role-arn: "arn:aws:iam::934643182396:role/external_secrets_operator_role"

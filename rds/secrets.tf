@@ -104,6 +104,10 @@ resource "kubernetes_manifest" "db_passwords" {
   }
 }
 
+data "aws_eks_cluster" "external" {
+  name = aws_eks_cluster.this.name
+}
+
 
 resource "aws_iam_policy" "secrets_manager_access" {
   name        = "secrets_manager_access_policy"
@@ -124,22 +128,34 @@ resource "aws_iam_policy" "secrets_manager_access" {
   })
 }
 
-resource "aws_iam_role" "external_secrets_operator" {
+
+
+resource "aws_iam_role" "external_secrets_operator_role" {
   depends_on = [ aws_iam_policy.secrets_manager_access ]
-  name               = "external_secrets_operator_role"
+  name       = "external_secrets_operator_role"
+
+  # Use the OIDC issuer URL from the EKS cluster to dynamically set the trust relationship
   assume_role_policy = jsonencode({
-    Version = "2012-10-17"
+    Version = "2012-10-17",
     Statement = [
       {
-        Effect = "Allow"
+        Sid      = "TrustMyRole",
+        Effect   = "Allow",
         Principal = {
-          Service = "eks.amazonaws.com"
+          Federated = "${replace(data.aws_eks_cluster.external.identity[0].oidc[0].issuer, "https://", "")}"
+        },
+        Action = "sts:AssumeRoleWithWebIdentity",
+        Condition = {
+          StringEquals = {
+            "${replace(data.aws_eks_cluster.external.identity[0].oidc[0].issuer, "https://", "")}:aud" = "sts.amazonaws.com",
+            "${replace(data.aws_eks_cluster.external.identity[0].oidc[0].issuer, "https://", "")}:sub" = "system:serviceaccount:default:external-sa"
+          }
         }
-        Action = "sts:AssumeRole"
       },
     ]
   })
 }
+
 
 resource "aws_iam_role_policy_attachment" "secrets_manager_access_attachment" {
   role       = aws_iam_role.external_secrets_operator.name
@@ -147,7 +163,14 @@ resource "aws_iam_role_policy_attachment" "secrets_manager_access_attachment" {
 }
 
 
-# resource "kubernetes_manifest" "external_sa" {
-#   depends_on = [ aws_iam_role.external_secrets_operator ]
-#   manifest = yamldecode(file("${path.module}/manifests/external-sa.yaml"))
-# }
+data "kubectl_file_documents" "store" {
+  content = file("manifests/externalsecretstore.yaml")
+}
+
+resource "kubectl_manifest" "secret_store" {
+  depends_on = [ aws_iam_role.external_secrets_operator ]
+  for_each  = data.kubectl_file_documents.store.manifests
+  yaml_body = each.value
+  wait = true
+  server_side_apply = true
+}
