@@ -20,7 +20,7 @@ module "iam_assumable_role_oidc" {
 }
 
 resource "kubernetes_manifest" "app_of_apps" {
-  depends_on = [ helm_release.argocd ]
+  depends_on = [ helm_release.argocd, kubernetes_secret.argocd_private_repo ]
   manifest = yamldecode(file("${path.module}/manifests/app-of-apps.yaml"))
 }
 
