@@ -104,11 +104,6 @@ resource "kubernetes_manifest" "db_passwords" {
   }
 }
 
-data "aws_eks_cluster" "external" {
-  name = aws_eks_cluster.this.name
-}
-
-
 resource "aws_iam_policy" "secrets_manager_access" {
   name        = "secrets_manager_access_policy"
   description = "Policy to access secrets in AWS Secrets Manager"
