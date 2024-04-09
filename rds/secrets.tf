@@ -43,7 +43,7 @@ resource "aws_secretsmanager_secret_version" "db_passwords_version" {
 ####### EXTERNAL SECRET ######
 
 resource "kubernetes_manifest" "db_passwords" {
-  depends_on = [aws_secretsmanager_secret_version.db_passwords_version, aws_iam_role.external_secrets_operator]
+  depends_on = [aws_secretsmanager_secret_version.db_passwords_version, aws_iam_role.external_secrets_operator_role]
 
   manifest = {
     apiVersion = "external-secrets.io/v1beta1"
@@ -158,7 +158,7 @@ resource "aws_iam_role" "external_secrets_operator_role" {
 
 
 resource "aws_iam_role_policy_attachment" "secrets_manager_access_attachment" {
-  role       = aws_iam_role.external_secrets_operator.name
+  role       = aws_iam_role.external_secrets_operator_role.name
   policy_arn = aws_iam_policy.secrets_manager_access.arn
 }
 
