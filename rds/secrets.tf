@@ -128,7 +128,9 @@ resource "aws_iam_policy" "secrets_manager_access" {
   })
 }
 
-
+data "aws_eks_cluster" "external" {
+  name = var.eks_name
+}
 
 resource "aws_iam_role" "external_secrets_operator_role" {
   depends_on = [ aws_iam_policy.secrets_manager_access ]
