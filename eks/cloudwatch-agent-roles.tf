@@ -36,7 +36,7 @@ resource "aws_iam_policy" "cloudwatch_agent_policy" {
   name        = "CloudWatchAgentServerPolicy"
   path        = "/"
   description = "Policy for CloudWatch agent on EKS"
-  policy = file("manifests/cloudwatch_policy.json")
+  policy = file("manifests/cloudwatchpolicy.json")
 }
 
 resource "aws_iam_role_policy_attachment" "cloudwatch_agent_policy_attachment" {
