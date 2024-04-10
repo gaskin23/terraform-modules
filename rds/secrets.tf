@@ -49,17 +49,17 @@ resource "kubernetes_manifest" "db_passwords" {
     apiVersion = "external-secrets.io/v1beta1"
     kind       = "ExternalSecret"
     metadata = {
-      name      = "db-passwords"
+      name      = "db-all-passwords"
       namespace = "default"
     }
     spec = {
       refreshInterval = "1m"
       secretStoreRef = {
         kind = "SecretStore"
-        name = "aws-secrets-manager"
+        name = "external-secretstore"
       }
       target = {
-        name           = "db-passwords"
+        name           = "db-all-passwords"
         creationPolicy = "Owner"
       }
       data = [
