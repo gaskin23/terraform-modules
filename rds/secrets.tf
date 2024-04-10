@@ -24,7 +24,7 @@ resource "random_password" "postgresql_password" {
 
 
 resource "aws_secretsmanager_secret" "db_passwords" {
-  name        = "db-passwords3"
+  name        = "db-all-passwords"
 }
 
 resource "aws_secretsmanager_secret_version" "db_passwords_version" {
