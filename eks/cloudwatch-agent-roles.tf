@@ -31,12 +31,33 @@ resource "aws_iam_role" "cloudwatch_agent_eks_role" {
   })
 }
 
-
 resource "aws_iam_policy" "cloudwatch_agent_policy" {
-  name        = "CloudWatchAgentServerPolicy"
-  path        = "/"
-  description = "Policy for CloudWatch agent on EKS"
-  policy = file("manifests/cloudwatchpolicy.json")
+  name        = "CloudWatchAgentPolicy"
+  description = "Policy for CloudWatch Agent"
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect = "Allow",
+        Action = [
+          "cloudwatch:PutMetricData",
+          "ec2:DescribeTags",
+          "cloudwatch:GetMetricStatistics",
+          "cloudwatch:ListMetrics",
+          "logs:PutLogEvents",
+          "logs:DescribeLogStreams",
+          "logs:CreateLogStream",
+          "logs:CreateLogGroup"
+        ],
+        Resource = "*"
+      },
+      {
+        Effect = "Allow",
+        Action = "ssm:GetParameter",
+        Resource = "arn:aws:ssm:*:*:parameter/AmazonCloudWatch-*"
+      }
+    ]
+  })
 }
 
 resource "aws_iam_role_policy_attachment" "cloudwatch_agent_policy_attachment" {
