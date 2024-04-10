@@ -53,7 +53,7 @@ resource "kubernetes_manifest" "db_passwords" {
       namespace = "default"
     }
     spec = {
-      refreshInterval = "1h"
+      refreshInterval = "1m"
       secretStoreRef = {
         kind = "SecretStore"
         name = "aws-secrets-manager"
@@ -104,32 +104,44 @@ resource "kubernetes_manifest" "db_passwords" {
   }
 }
 
-resource "aws_iam_policy" "secrets_manager_access" {
-  name        = "secrets_manager_access_policy"
-  description = "Policy to access secrets in AWS Secrets Manager"
+############# EXTERNAL SECRETS ############
 
+resource "aws_iam_policy" "external_secrets_policy" {
+  name        = "ExternalSecretsManagerPolicy"
+  description = "Allows access to Secrets Manager and SSM Parameter Store"
   policy = jsonencode({
-    Version = "2012-10-17"
+    Version = "2012-10-17",
     Statement = [
       {
+        Effect = "Allow",
         Action = [
           "secretsmanager:GetSecretValue",
           "secretsmanager:DescribeSecret",
-        ]
-        Effect   = "Allow"
-        Resource = "arn:aws:secretsmanager:us-east-1:934643182396:secret:db-passwords-*"
+          "secretsmanager:ListSecrets",
+          "ssm:GetParameters",
+          "ssm:GetParameter",
+          "ssm:DescribeParameters",
+          "ssm:GetParameterHistory",
+        ],
+        Resource = "*"
       },
     ]
   })
 }
 
+
+
+
 data "aws_eks_cluster" "external" {
   name = var.eks_name
 }
 
+data "aws_caller_identity" "current" {}
+
+data "aws_region" "current" {}
+
 resource "aws_iam_role" "external_secrets_operator_role" {
-  depends_on = [ aws_iam_policy.secrets_manager_access ]
-  name       = "external_secrets_operator_role"
+  name = "external_secrets_operator_role"
 
   # Use the OIDC issuer URL from the EKS cluster to dynamically set the trust relationship
   assume_role_policy = jsonencode({
@@ -139,7 +151,7 @@ resource "aws_iam_role" "external_secrets_operator_role" {
         Sid      = "TrustMyRole",
         Effect   = "Allow",
         Principal = {
-          Federated = "${replace(data.aws_eks_cluster.external.identity[0].oidc[0].issuer, "https://", "")}"
+          Federated = "${replace(data.aws_eks_cluster.external.identity[0].oidc[0].issuer, "https://", "arn:aws:iam::${data.aws_caller_identity.current.account_id}:oidc-provider/")}"
         },
         Action = "sts:AssumeRoleWithWebIdentity",
         Condition = {
@@ -156,7 +168,7 @@ resource "aws_iam_role" "external_secrets_operator_role" {
 
 resource "aws_iam_role_policy_attachment" "secrets_manager_access_attachment" {
   role       = aws_iam_role.external_secrets_operator_role.name
-  policy_arn = aws_iam_policy.secrets_manager_access.arn
+  policy_arn = aws_iam_policy.external_secrets_policy.arn
 }
 
 
