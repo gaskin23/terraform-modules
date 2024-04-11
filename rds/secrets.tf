@@ -35,7 +35,7 @@ resource "aws_secretsmanager_secret_version" "db_passwords_version" {
     REDIS_PASSWORD       = random_password.redis_password.result
     MYSQL_PASSWORD       = random_password.mysql_password.result
     DB_PASSWORD          = random_password.postgresql_password.result
-    DB_HOST              = aws_db_instance.this.endpoint
+    DB_HOST              = split(":", aws_db_instance.this.endpoint)[0]
   })
 }
 
