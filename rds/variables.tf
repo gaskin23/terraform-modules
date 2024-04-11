@@ -71,6 +71,12 @@ variable "alert_email_address" {
   default     = "gashcin23@gmail.com"
 }
 
+variable "db_password" {
+  description = "for secret manager"
+  type        = string
+  default     = "db-all-password"
+}
+
 variable "eks_name" {
   description = "Name of the cluster."
   type        = string
