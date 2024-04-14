@@ -96,12 +96,26 @@ resource "helm_release" "argocd" {
 
 }
 
+##########REG-CRED CREATE#######
 
+data "aws_ecr_authorization_token" "ecr_auth" {
+  # Optionally specify a specific ECR repository.
+}
 
-# resource "kubernetes_manifest" "app_of_apps" {
-  #     depends_on = [
-  #   helm_release.argocd
-  # ]
-#   # Assuming file() reads the YAML into a string, but you might need to convert this for actual use
-#   manifest = file("${path.module}/manifests/app-of-apps.yaml")
-# }
+data "template_file" "regcred_secret" {
+  template = file("${path.module}/manifests/regcred-secret.tpl")
+
+  vars = {
+    dockerconfigjson = base64encode(jsonencode({
+      auths = {
+        "${data.aws_ecr_authorization_token.ecr_auth.proxy_endpoint}" = {
+          auth = base64encode("AWS:${data.aws_ecr_authorization_token.ecr_auth.password}")
+        }
+      }
+    }))
+  }
+}
+
+resource "kubectl_manifest" "regcred" {
+  yaml_body = data.template_file.regcred_secret.rendered
+}
