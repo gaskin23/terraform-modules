@@ -117,5 +117,6 @@ data "template_file" "regcred_secret" {
 }
 
 resource "kubectl_manifest" "regcred" {
+  depends_on = [ helm_release.argocd ]
   yaml_body = data.template_file.regcred_secret.rendered
 }
