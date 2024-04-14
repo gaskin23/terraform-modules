@@ -53,20 +53,23 @@ data "aws_vpc" "eks" {
   id = var.vpc_id
 }
 
-module "kubernetes-addons" {
-  source = "git::https://github.com/gaskin23/guardian-terraform.git//kubernetes-addons?ref=v1.8.5"
-}
-
 resource "aws_security_group" "eks_worker_sg" {
   name        = "eks-worker-sg"
   description = "Security group for EKS worker nodes allowing traffic from the Load Balancer"
   vpc_id      = data.aws_vpc.eks.id
 
   ingress {
-    from_port       = 30000
-    to_port         = 32767
+    from_port       = 80
+    to_port         = 80
     protocol        = "tcp"
-    security_groups = module.aws_security_group.lb_sg.id
+    cidr_blocks     = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port       = 443
+    to_port         = 443
+    protocol        = "tcp"
+    cidr_blocks     = ["0.0.0.0/0"]
   }
 
   egress {
