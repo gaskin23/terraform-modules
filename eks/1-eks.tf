@@ -45,3 +45,38 @@ resource "aws_cloudwatch_log_group" "this" {
 
   # ... potentially other configuration ...
 }
+
+
+###########SECURITY GROUP##########
+
+data "aws_vpc" "eks" {
+  id = var.vpc_id
+}
+
+data "aws_security_group" "lb_sg" {
+  id = var.load_balancer_security_group_id
+}
+
+resource "aws_security_group" "eks_worker_sg" {
+  name        = "eks-worker-sg"
+  description = "Security group for EKS worker nodes allowing traffic from the Load Balancer"
+  vpc_id      = data.aws_vpc.eks.id
+
+  ingress {
+    from_port       = 30000
+    to_port         = 32767
+    protocol        = "tcp"
+    security_groups = data.aws_security_group.lb_sg.id
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "EKSWorkerNodeSecurityGroup"
+  }
+}

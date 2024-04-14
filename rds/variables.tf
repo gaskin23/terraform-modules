@@ -82,3 +82,11 @@ variable "eks_name" {
   type        = string
   default     = "guardian"
 }
+
+
+variable "vpc_id" {
+}
+
+variable "eks_worker_security_group_id" {
+  
+}

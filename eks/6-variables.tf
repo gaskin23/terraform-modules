@@ -39,3 +39,10 @@ variable "enable_irsa" {
   type        = bool
   default     = true
 }
+
+variable "vpc_id" {
+}
+
+variable "load_balancer_security_group_id" {
+  
+}
