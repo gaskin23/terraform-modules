@@ -2,10 +2,10 @@ data "aws_vpc" "rds" {
   id = var.vpc_id
 }
 
-data "aws_security_group" "rds_eks" {
-  id = var.eks_worker_security_group_id
+module "eks" {
+  source = "./eks"
+  
 }
-
 
 resource "aws_security_group" "rds_sg" {
   name        = "rds-postgresql-sg"
@@ -16,7 +16,7 @@ resource "aws_security_group" "rds_sg" {
     from_port       = 5432
     to_port         = 5432
     protocol        = "tcp"
-    security_groups = data.aws_security_group.rds_eks.id
+    security_groups = module.aws_security_group.eks_worker_sg.id
   }
 
   egress {

@@ -53,8 +53,8 @@ data "aws_vpc" "eks" {
   id = var.vpc_id
 }
 
-data "aws_security_group" "lb_sg" {
-  id = var.load_balancer_security_group_id
+module "kubernetes-addons" {
+  source = "./kubernetes-addons"
 }
 
 resource "aws_security_group" "eks_worker_sg" {
@@ -66,7 +66,7 @@ resource "aws_security_group" "eks_worker_sg" {
     from_port       = 30000
     to_port         = 32767
     protocol        = "tcp"
-    security_groups = data.aws_security_group.lb_sg.id
+    security_groups = module.aws_security_group.lb_sg.id
   }
 
   egress {

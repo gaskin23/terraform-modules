@@ -42,7 +42,3 @@ variable "enable_irsa" {
 
 variable "vpc_id" {
 }
-
-variable "load_balancer_security_group_id" {
-  
-}
