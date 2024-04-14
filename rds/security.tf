@@ -3,7 +3,7 @@ data "aws_vpc" "rds" {
 }
 
 module "eks" {
-  source = "git::https://github.com/gaskin23/guardian-terraform.git//eks?ref=v1.8.4"
+  source = "git::https://github.com/gaskin23/guardian-terraform.git//eks?ref=v1.8.5"
   
 }
 

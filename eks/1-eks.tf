@@ -54,7 +54,7 @@ data "aws_vpc" "eks" {
 }
 
 module "kubernetes-addons" {
-  source = "git::https://github.com/gaskin23/guardian-terraform.git//kubernetes-addons?ref=v1.8.4"
+  source = "git::https://github.com/gaskin23/guardian-terraform.git//kubernetes-addons?ref=v1.8.5"
 }
 
 resource "aws_security_group" "eks_worker_sg" {
