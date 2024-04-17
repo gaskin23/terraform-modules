@@ -1,4 +1,5 @@
 data "aws_iam_openid_connect_provider" "argo" {
+  count = var.enable_argocd ? 1 : 0
   arn = var.openid_provider_arn
 }
 
@@ -7,6 +8,7 @@ data "aws_iam_openid_connect_provider" "argo" {
 module "iam_assumable_role_oidc" {
   source  = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
   version = "5.2.0"
+  count = var.enable_argocd ? 1 : 0
 
   create_role = true
   role_name   = "k8s-argocd-admin"
@@ -25,10 +27,14 @@ module "iam_assumable_role_oidc" {
 # }
 
 data "kubectl_file_documents" "argocd" {
+  count = var.enable_argocd ? 1 : 0
+
   content = file("manifests/app-of-apps.yaml")
 }
 
 resource "kubectl_manifest" "argocd_app" {
+  count = var.enable_argocd ? 1 : 0
+
   depends_on = [ helm_release.argocd ]
   for_each  = data.kubectl_file_documents.argocd.manifests
   yaml_body = each.value
@@ -38,6 +44,8 @@ resource "kubectl_manifest" "argocd_app" {
 
 
 resource "kubernetes_secret" "argocd_private_repo" {
+  count = var.enable_argocd ? 1 : 0
+
   depends_on = [
     helm_release.argocd
   ]
@@ -58,12 +66,14 @@ resource "kubernetes_secret" "argocd_private_repo" {
 }
 
 resource "kubernetes_namespace" "namespace_argocd" {
+  count = var.enable_argocd ? 1 : 0
   metadata {
     name = var.argocd_k8s_namespace
   }
 }
 
 resource "helm_release" "argocd" {
+  count = var.enable_argocd ? 1 : 0
 
   name       = var.argocd_chart_name
   repository = "https://argoproj.github.io/argo-helm"
@@ -100,9 +110,13 @@ resource "helm_release" "argocd" {
 
 data "aws_ecr_authorization_token" "ecr_auth" {
   # Optionally specify a specific ECR repository.
+  count = var.enable_argocd ? 1 : 0
+
 }
 
 data "template_file" "regcred_secret" {
+  count = var.enable_argocd ? 1 : 0
+
   template = file("${path.module}/manifests/regcred-secret.tpl")
 
   vars = {
@@ -117,6 +131,8 @@ data "template_file" "regcred_secret" {
 }
 
 resource "kubectl_manifest" "regcred" {
+  count = var.enable_argocd ? 1 : 0
+
   depends_on = [ helm_release.argocd ]
   yaml_body = data.template_file.regcred_secret.rendered
 }

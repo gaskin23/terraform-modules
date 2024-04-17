@@ -33,3 +33,9 @@ variable "private_key_path" {
   description = "Path to the SSH private key"
   default     = "~/.ssh/id_rsa"
 }
+
+variable "enable_argocd" {
+  description = "Determines whether to create ArgoCD or not"
+  type        = bool
+  default     = true
+}
